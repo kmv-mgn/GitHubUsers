@@ -20,7 +20,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     //отображает указанный фрагмент
     @Override
     public Fragment getItem(int position) {
-        return null; //PlaceholderFragmen
+        return PlaceholderFragment.newInstance(position); //создавая страницу пэйджера методом getItem, вызываем newInstance
     }
 
     //определяет количество листов пейджера
