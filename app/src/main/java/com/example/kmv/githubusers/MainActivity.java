@@ -1,5 +1,6 @@
 package com.example.kmv.githubusers;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"Установливаем для mViewPager адаптер mSectionsPagerAdapter");
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        /*TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        //Log.d(TAG,"Нашли R.id.tabs в объект tabLayout");
+
+        Log.d(TAG,"Связываем tabLayout и mViewPager");
+        tabLayout.setupWithViewPager(mViewPager);*/
 
     }
 }
