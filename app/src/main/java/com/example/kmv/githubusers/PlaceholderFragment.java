@@ -38,10 +38,14 @@ public class PlaceholderFragment extends Fragment {
         int numTab; //переменная для хапоминания номера страницы пейджера
         numTab = getArguments().getInt(ARG_SECTION_NUMBER);
         Log.d(TAG,"... Создаем фрагмент, numTab = "+ Integer.toString(numTab));
-        TextView tv = (TextView) container.findViewById(R.id.tvFragment);
-        tv.setText("Находимся на вкладке "+numTab);
 
-        return inflater.inflate(R.layout.fragment_placeholder, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
+
+        TextView tv = (TextView) rootView.findViewById(R.id.tvFragment);
+        String displayText = "Находимся на вкладке "+Integer.toString(numTab);
+        tv.setText(displayText);
+
+        return rootView;
     }
 
 }
