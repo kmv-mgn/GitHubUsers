@@ -3,6 +3,9 @@ package com.example.kmv.githubusers;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,17 +37,25 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         int numTab; //переменная для хапоминания номера страницы пейджера
         numTab = getArguments().getInt(ARG_SECTION_NUMBER);
         Log.d(TAG,"... Создаем фрагмент, numTab = "+ Integer.toString(numTab));
 
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
 
-        TextView tv = (TextView) rootView.findViewById(R.id.tvFragment);
+        TextView tv = (TextView) rootView.findViewById(R.id.tv_Fragment);
         String displayText = "Находимся на вкладке "+Integer.toString(numTab);
         tv.setText(displayText);
 
+        CardAdapter adapter = new CardAdapter();
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView.setAdapter(adapter);
+
+        //установка макета для рециклер
+        LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        Log.d(TAG,"Создали фрагмент и устанавливаем его");
         return rootView;
     }
 
