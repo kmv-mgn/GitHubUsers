@@ -1,8 +1,8 @@
 package com.example.kmv.githubusers;
 
-import java.util.List;
+import java.util.ArrayList;
+import rx.Observable;
 
-import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
@@ -11,5 +11,5 @@ import retrofit2.http.GET;
 
 public interface GitHubService {
     @GET("users")
-    Call <List<User>> getUsers();
+    Observable<ArrayList<User>> getUsers();
 }

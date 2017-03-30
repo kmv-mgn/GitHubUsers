@@ -1,15 +1,11 @@
 package com.example.kmv.githubusers.activity;
 
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.kmv.githubusers.GetDataGitHub;
 import com.example.kmv.githubusers.GitHubService;
 import com.example.kmv.githubusers.GitHubServiceUserInfo;
 import com.example.kmv.githubusers.R;
@@ -18,18 +14,9 @@ import com.example.kmv.githubusers.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -78,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Связываем tabLayout и mViewPager");
         tabLayout.setupWithViewPager(mViewPager);
 
-    //---------------------------------------------------------------------------------------------------
+/*    //---------------------------------------------------------------------------------------------------
         //Получаем данные с гитхаба
         Call<List<User>> call = service.getUsers();
 
@@ -107,10 +94,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-//-------------------------------------------------------------------------------------------------------
-
         //сразу сортируем полученный список пользователей
         Collections.sort(userList, new Comparator <String>() {
             public int compare(String o1, String o2) {
@@ -129,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
         for (User user : users){
             System.out.println("Login="+user.getLogin()+" Name="+user.getName());
         }
-
-
+//-------------------------------------------------------------------------------------------------------
+*/
 /*        //Получаем данные с гитхаба о конкретном пользователе
         for (String user : userList){                   //цикл по списку пользователей
             Call <User> callUserInfo = serviceUserInfo.getUsers(user);

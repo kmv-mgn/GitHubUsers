@@ -3,7 +3,6 @@ package com.example.kmv.githubusers;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.kmv.githubusers.RetrofitGitHub;
+
+import static com.example.kmv.githubusers.RetrofitGitHub.getModelsObservable;
+import static com.example.kmv.githubusers.RetrofitGitHub.init;
 
 
 /**
@@ -57,6 +61,10 @@ public class PlaceholderFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         Log.d(TAG,"Создали фрагмент и устанавливаем его");
         return rootView;
+
+        //init();
+        //getModelsObservable();
+
     }
 
 }
