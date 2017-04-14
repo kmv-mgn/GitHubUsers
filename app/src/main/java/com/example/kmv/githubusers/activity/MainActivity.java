@@ -14,11 +14,17 @@ import com.example.kmv.githubusers.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,18 +36,20 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL = "https://api.github.com/";    //базовый URL
 
     private ArrayList<String> userList = new ArrayList<String>();    //для хранения списка логинов пользователей
-    private List<User> users = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
+    //private List<User> users = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
 
     private Gson gson = new GsonBuilder().create();                 //Инициализация объекта Gson
+
 
     private Retrofit retrofit = new Retrofit.Builder()              //Инициализация объекта Retrofit
             .baseUrl(URL)       //определение базововго url
             .addConverterFactory(GsonConverterFactory.create(gson)) //конвертирование в json-тип
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .build();
 
-    private GitHubService service = retrofit.create(GitHubService.class);   //Инициализация интерфейса для получения списка всех пользователей
+    private GitHubService gitHubService = retrofit.create(GitHubService.class);   //Инициализация интерфейса для получения списка всех пользователей
     //Инициализация интерфейса для получения информации о конкретном пользователе
-    private GitHubServiceUserInfo serviceUserInfo = retrofit.create(GitHubServiceUserInfo.class);
+    private GitHubServiceUserInfo gitHubServiceUserInfo = retrofit.create(GitHubServiceUserInfo.class);
 
  //--------------------------------------------------------------------------------------------------
     @Override
@@ -64,6 +72,25 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         Log.d(TAG,"Связываем tabLayout и mViewPager");
         tabLayout.setupWithViewPager(mViewPager);
+
+//---------------------------------------------------------------------------------------------------
+       /*Observable<ArrayList<User>> usersGitHub = gitHubService.getUsers();      //получили список пользователей с апи
+        usersGitHub.subscribeOn(Schedulers.newThread())
+                    .subscribe();*/
+       Observable<User> userInfo = gitHubServiceUserInfo.getUserInfo("kmv-mgn");
+        userInfo.subscribeOn(Schedulers.newThread())
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        System.out.println(user.getLogin());
+                    }
+                });
+
+
+
+
+
+
 
 /*    //---------------------------------------------------------------------------------------------------
         //Получаем данные с гитхаба
