@@ -14,5 +14,5 @@ import retrofit2.http.Path;
 
 public interface GitHubServiceUserInfo {
     @GET("users/{user}")
-    Observable<User> getUserInfo(@Part("user") String user);
+    Observable<User> getUserInfo(@Path("user") String user);
 }

@@ -23,7 +23,10 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,18 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> userList = new ArrayList<String>();    //для хранения списка логинов пользователей
     //private List<User> users = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
 
-    private Gson gson = new GsonBuilder().create();                 //Инициализация объекта Gson
+        private Gson gson = new GsonBuilder().create();                 //Инициализация объекта Gson
 
 
-    private Retrofit retrofit = new Retrofit.Builder()              //Инициализация объекта Retrofit
-            .baseUrl(URL)       //определение базововго url
-            .addConverterFactory(GsonConverterFactory.create(gson)) //конвертирование в json-тип
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build();
+        private Retrofit retrofit = new Retrofit.Builder()              //Инициализация объекта Retrofit
+                .baseUrl(URL)       //определение базововго url
+                .addConverterFactory(GsonConverterFactory.create(gson)) //конвертирование в json-тип
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
 
-    private GitHubService gitHubService = retrofit.create(GitHubService.class);   //Инициализация интерфейса для получения списка всех пользователей
-    //Инициализация интерфейса для получения информации о конкретном пользователе
-    private GitHubServiceUserInfo gitHubServiceUserInfo = retrofit.create(GitHubServiceUserInfo.class);
+        private GitHubService gitHubService = retrofit.create(GitHubService.class);   //Инициализация интерфейса для получения списка всех пользователей
+        //Инициализация интерфейса для получения информации о конкретном пользователе
+        private GitHubServiceUserInfo gitHubServiceUserInfo = retrofit.create(GitHubServiceUserInfo.class);
 
  //--------------------------------------------------------------------------------------------------
     @Override
@@ -77,95 +80,78 @@ public class MainActivity extends AppCompatActivity {
        /*Observable<ArrayList<User>> usersGitHub = gitHubService.getUsers();      //получили список пользователей с апи
         usersGitHub.subscribeOn(Schedulers.newThread())
                     .subscribe();*/
-       Observable<User> userInfo = gitHubServiceUserInfo.getUserInfo("kmv-mgn");
-        userInfo.subscribeOn(Schedulers.newThread())
+       // usersGitHub();
+      //  userInfo("kmv-mgn");
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        exampleUserInfo();
+
+
+
+    }
+
+    //--------------------------------------------------------------------------------
+    //  ------------              мои методы            ------------------------------
+    //--------------------------------------------------------------------------------
+
+    private Observable<ArrayList<User>> usersGitHub(){          //получаем объект Observable от апи со списком
+                                                                //всех открытых в апи пользователей
+        Observable<ArrayList<User>> usersGitHub = gitHubService.getUsers();
+
+        usersGitHub.subscribeOn(Schedulers.newThread())        //подписываем все действия в отдельный поток
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<ArrayList<User>>() {
+                    @Override
+                    public void call(ArrayList<User> users) {
+                        for (User user: users) {
+                            Log.d(TAG, "Логин, который получили с апи" + user.getLogin());
+                        }
+                    }
+                });
+        return usersGitHub;
+    }
+
+
+    private Observable<User> userInfo(String userLogin){        //получаем объект Observable от апи с
+                                                                //информацией по конкретному пользователю
+        Observable<User> userInfo = gitHubServiceUserInfo.getUserInfo(userLogin);
+        /*userInfo.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
-                        System.out.println(user.getLogin());
+                        Log.d(TAG,"Количество подписчиков"+user.getFollowers());
+                    }
+                });*/
+        return userInfo;
+    }
+
+    private Observable<ArrayList<User>> exampleUserInfo(){        //Общий Observable от апи с
+        //информацией по конкретному пользователю
+        Observable<ArrayList<User>> exampleUserInfo = gitHubService.getUsers();  //Получает список пользователей с данными
+        exampleUserInfo
+                .flatMap(new Func1<List<User>, Observable<User>>() {
+                    @Override
+                    public Observable<User> call(List<User> users) {
+                        return Observable.from(users);
+                    }
+                })
+                .flatMap(new Func1<User, Observable<User>>() {
+                    @Override
+                    public Observable<User> call(User user) {
+                        return userInfo(user.getLogin());
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        Log.d(TAG,"Количество подписчиков у "+user.getLogin()+" = "+user.getFollowers());
                     }
                 });
-
-
-
-
-
-
-
-/*    //---------------------------------------------------------------------------------------------------
-        //Получаем данные с гитхаба
-        Call<List<User>> call = service.getUsers();
-
-        //асинхронное получение данных с сервера
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                // Запрос выполнился успешно
-                if (response.isSuccessful()) {
-                    //отображение данных каждого пользователя в общем списке
-                    for (User user : response.body()){
-                        userList.add(user.getLogin());  //наполняем массив логинов для последующего считывания подробной информации
-                        //System.out.println("Login="+user.getLogin()+" Name="+user.getName());
-
-                    }
-
-                } else {
-                    onError();                          // Сервер вернул ошибку
-                }
-            }
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                onError();                              // Сервер вернул ошибку
-            }
-
-        });
-
-
-        //сразу сортируем полученный список пользователей
-        Collections.sort(userList, new Comparator <String>() {
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
-        //ВЫВОД ВСЕГО СПИСКА пользователей
-        System.out.println("ВЫВОД ВСЕГО СПИСКА пользователей");
-        for (int i=0; i<userList.size(); i++){
-            System.out.println("Login="+userList.get(i));
-        }
-
-        //отображение данных каждого пользователя в общем списке (отсортированном)
-        System.out.println("Отсортированный вывод:");
-        for (User user : users){
-            System.out.println("Login="+user.getLogin()+" Name="+user.getName());
-        }
-//-------------------------------------------------------------------------------------------------------
-*/
-/*        //Получаем данные с гитхаба о конкретном пользователе
-        for (String user : userList){                   //цикл по списку пользователей
-            Call <User> callUserInfo = serviceUserInfo.getUsers(user);
-
-            //асинхронное получение данных с сервера
-            callUserInfo.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    // Запрос выполнился успешно
-                    if (response.isSuccessful()) {
-                        users.add(response.body());     //добавляем полученную информацию о польз-ле в общий список
-                    } else {
-                        onError();                      // Сервер вернул ошибку
-                    }
-                }
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    onError();                          // Сервер вернул ошибку
-                }
-            });
-
-        }
-*/
-
+        return exampleUserInfo;
     }
+
 
     private void onError() {
         //Сервер вернул ошибку
