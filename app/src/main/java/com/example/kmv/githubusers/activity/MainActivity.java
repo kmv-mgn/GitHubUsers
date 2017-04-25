@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
        // usersGitHub();
       //  userInfo("kmv-mgn");
       //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        exampleUserInfo();
+       exampleUserInfo();
+
 
 
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------
     //  ------------              мои методы            ------------------------------
     //--------------------------------------------------------------------------------
-
+/*
     private Observable<ArrayList<User>> usersGitHub(){          //получаем объект Observable от апи со списком
                                                                 //всех открытых в апи пользователей
         Observable<ArrayList<User>> usersGitHub = gitHubService.getUsers();
@@ -110,21 +111,20 @@ public class MainActivity extends AppCompatActivity {
         return usersGitHub;
     }
 
-
     private Observable<User> userInfo(String userLogin){        //получаем объект Observable от апи с
                                                                 //информацией по конкретному пользователю
         Observable<User> userInfo = gitHubServiceUserInfo.getUserInfo(userLogin);
-        /*userInfo.subscribeOn(Schedulers.newThread())
+       userInfo.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
                         Log.d(TAG,"Количество подписчиков"+user.getFollowers());
                     }
-                });*/
+                });
         return userInfo;
     }
-
+*/
     private Observable<ArrayList<User>> exampleUserInfo(){        //Общий Observable от апи с
         //информацией по конкретному пользователю
         Observable<ArrayList<User>> exampleUserInfo = gitHubService.getUsers();  //Получает список пользователей с данными
@@ -138,22 +138,31 @@ public class MainActivity extends AppCompatActivity {
                 .flatMap(new Func1<User, Observable<User>>() {
                     @Override
                     public Observable<User> call(User user) {
-                        return userInfo(user.getLogin());
+                        return gitHubServiceUserInfo.getUserInfo(user.getLogin());            //userInfo(user.getLogin());
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Action1<Throwable> ()
+                        {
+                            @Override
+                            public void call(Throwable throwable) {
+                                onError();
+                            }
+                        })
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
                         Log.d(TAG,"Количество подписчиков у "+user.getLogin()+" = "+user.getFollowers());
                     }
-                });
+                    });
+
         return exampleUserInfo;
     }
 
-
     private void onError() {
-        //Сервер вернул ошибку
+        Log.d(TAG,"Ууууупсс.. ошибочка вышла..");
     }
+
+
 }
