@@ -4,6 +4,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;             //адаптер фрагмента для пейджера
     private ViewPager mViewPager;                                   //@ViewPager, в котором будет размещаться содержание раздела
+    private RecyclerView mRecyclerView;                             //Рециклер для отображения карточек
     private static final String TAG = "MyLog";
     private static final String TAG_Log = "TAG_Log";
     private static final String URL = "https://api.github.com/";    //базовый URL
@@ -76,24 +78,28 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Связываем tabLayout и mViewPager");
         tabLayout.setupWithViewPager(mViewPager);
 
+        //устанавливаем RecyclerView и CardView
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        //mRecyclerView.setLayoutManager();
+
 //---------------------------------------------------------------------------------------------------
-        //такой вариант:
+    /*    //1й вариант:
         usersList.clear();
-        exampleUserInfo();      //получаем список польз-лей, а потом полную информацию о каждом по логину из списка
+        usersGitHub();      //получаем список польз-лей, а потом полную информацию о каждом по логину из списка
          for (User user : usersList){
             Log.d(TAG,"У пользователя "+user.getLogin()+" подписчиков = "+user.getFollowers());
         }
-
- /*       //или такой вариант:
+*/
+       //или 2й вариант:
         usersList.clear();
-        getUserListGitHub();    //получаем список пользователей с api
+        getUserListGitHub();    //получаем список всех пользователей с api
 
-        for (User user : usersList){
-            Log.d(TAG,"usersList:  Человечек из списка: "+user.getLogin()+" = "+user.getFollowers());
-            getUserInfoGitHub(user.getLogin());     //получаем полную информацию о пользователе по логину
+        for (int i=0; i<10; i++){
+            Log.d(TAG,"usersList: "+i+" человечек из списка: "+usersList.get(i).getLogin()+" = "+usersList.get(i).getFollowers());
+            getUserInfoGitHub(usersList.get(i).getLogin());     //получаем полную информацию о пользователе по логину
         }
         Toast.makeText(this, "Конец!", Toast.LENGTH_LONG).show();
-*/
+
 
 
 
@@ -150,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //для варианта 1
-  private Observable<ArrayList<User>> exampleUserInfo(){        //Получение информации о пользователях от api
+  private Observable<ArrayList<User>> usersGitHub(){        //Получение информации о пользователях от api
         //информацией по конкретному пользователю
         Observable<ArrayList<User>> exampleUserInfo = gitHubService.getUsers();  //Получает список пользователей с небольшим набором свойств пользователей
         exampleUserInfo
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void call(Throwable throwable) {
                                 Log.d(TAG,"Ошибка  "+ throwable);
-                                //onError();
+                                onError();
                             }
                         })
                 .subscribe(new Subscriber<User>() {
@@ -188,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onNext(User user) {
-                        Log.d(TAG,"Количество подписчиков у "+user.getLogin()+" = "+user.getFollowers());
+                        Log.d(TAG,"-+-+-Выполнение метода onNext");
                         usersList.add(user);
                     }
                 });
@@ -196,10 +202,8 @@ public class MainActivity extends AppCompatActivity {
         return exampleUserInfo;
     }
 
-
     private void onError() {
         Log.d(TAG,"Ууууупсс.. ошибочка вышла..");
     }
-
 
 }
