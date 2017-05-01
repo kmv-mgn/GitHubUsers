@@ -87,49 +87,4 @@ public class RetrofitGitHub {
 
 
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// удалить потом!!!
-   /* private ArrayList<String> userList = new ArrayList<String>();    //для хранения списка логинов пользователей
-    private List<User> users = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
-
-
-
-    public List<String> getUserList(){
-        //Получаем данные с гитхаба
-        Call<List<User>> call = service.getUsers();
-
-        //асинхронное получение данных с сервера
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                // Запрос выполнился успешно
-                if (response.isSuccessful()) {
-                    //отображение данных каждого пользователя в общем списке
-                    for (User user : response.body()){
-                        userList.add(user.getLogin());  //наполняем массив логинов для последующего считывания подробной информации
-                        //System.out.println("Login="+user.getLogin()+" Name="+user.getName());
-
-                    }
-
-                } else {
-                    onError();                          // Сервер вернул ошибку
-                }
-            }
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                onError();                              // Сервер вернул ошибку
-            }
-
-        });
-        return userList;
-    }
-    ///////////////////////////////////////////////////////////////
-
-
-    private void onError() {
-        //Сервер вернул ошибку
-    }
-*/
 }

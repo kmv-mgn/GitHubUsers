@@ -4,13 +4,18 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kmv.githubusers.CardAdapter;
+import com.example.kmv.githubusers.Const;
+import com.example.kmv.githubusers.Data;
 import com.example.kmv.githubusers.GitHubService;
 import com.example.kmv.githubusers.GitHubServiceUserInfo;
 import com.example.kmv.githubusers.R;
+import com.example.kmv.githubusers.RetrofitGit;
 import com.example.kmv.githubusers.SectionsPagerAdapter;
 import com.example.kmv.githubusers.User;
 import com.google.gson.Gson;
@@ -33,28 +38,14 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    //public RetrofitGit retrofitGit;
     private SectionsPagerAdapter mSectionsPagerAdapter;             //адаптер фрагмента для пейджера
     private ViewPager mViewPager;                                   //@ViewPager, в котором будет размещаться содержание раздела
-    private RecyclerView mRecyclerView;                             //Рециклер для отображения карточек
     private static final String TAG = "MyLog";
-    private static final String TAG_Log = "TAG_Log";
-    private static final String URL = "https://api.github.com/";    //базовый URL
-
-    private List<User> usersList = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
-
-        private Gson gson = new GsonBuilder().create();                 //Инициализация объекта Gson
+    //public static List<User> usersList = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
 
 
-        private Retrofit retrofit = new Retrofit.Builder()              //Инициализация объекта Retrofit
-                .baseUrl(URL)       //определение базововго url
-                .addConverterFactory(GsonConverterFactory.create(gson)) //конвертирование в json-тип
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
 
-        private GitHubService gitHubService = retrofit.create(GitHubService.class);   //Инициализация интерфейса для получения списка всех пользователей
-        //Инициализация интерфейса для получения информации о конкретном пользователе
-        private GitHubServiceUserInfo gitHubServiceUserInfo = retrofit.create(GitHubServiceUserInfo.class);
 
  //--------------------------------------------------------------------------------------------------
     @Override
@@ -78,11 +69,24 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Связываем tabLayout и mViewPager");
         tabLayout.setupWithViewPager(mViewPager);
 
-        //устанавливаем RecyclerView и CardView
+       /* //устанавливаем RecyclerView и CardView
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        //mRecyclerView.setLayoutManager();
-
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.setAdapter(mCardAdapter);
+*/
 //---------------------------------------------------------------------------------------------------
+        //создаем объект ретрофита Retrofit
+        //retrofitGit = new RetrofitGit();
+        RetrofitGit.initGitHub();           //создается объект ретрофита, выполнятеся запрос к серверу на список пользователей
+                                            // и сохраняется в списке класса Data
+        Log.d(Const.TAG,"Готов первоначальный список пользователей! Первый в списке:"+ Data.usersList.get(0).getLogin());
+
+        for (int i=0; i<10; i++){
+            RetrofitGit.getUserInfo(Data.usersList.get(i).getLogin());
+
+        }
+
     /*    //1й вариант:
         usersList.clear();
         usersGitHub();      //получаем список польз-лей, а потом полную информацию о каждом по логину из списка
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"У пользователя "+user.getLogin()+" подписчиков = "+user.getFollowers());
         }
 */
-       //или 2й вариант:
+ /*      //или 2й вариант:
         usersList.clear();
         getUserListGitHub();    //получаем список всех пользователей с api
 
@@ -98,18 +102,18 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"usersList: "+i+" человечек из списка: "+usersList.get(i).getLogin()+" = "+usersList.get(i).getFollowers());
             getUserInfoGitHub(usersList.get(i).getLogin());     //получаем полную информацию о пользователе по логину
         }
+
+
+*/
+
+
         Toast.makeText(this, "Конец!", Toast.LENGTH_LONG).show();
-
-
-
-
-
     }
 
     //--------------------------------------------------------------------------------
     //  ------------              мои методы            ------------------------------
     //--------------------------------------------------------------------------------
-//для варианта 2
+/*//для варианта 2
     private Observable<ArrayList<User>> getUserListGitHub(){        //Получение списка пользователей от api
         //информацией по конкретному пользователю
 
@@ -148,15 +152,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNext(User user) {
                 Log.d(TAG,"-+-+-Количество подписчиков у "+user.getLogin()+" = "+user.getFollowers());
-                //usersList = users;
+                //mCardAdapter.addData(user); //usersList = users;
             }
         };
         userInfo.subscribe(subscriber);
         return userInfo;
     }
-
+*/
 //для варианта 1
-  private Observable<ArrayList<User>> usersGitHub(){        //Получение информации о пользователях от api
+/*  private Observable<ArrayList<User>> usersGitHub(){        //Получение информации о пользователях от api
         //информацией по конкретному пользователю
         Observable<ArrayList<User>> exampleUserInfo = gitHubService.getUsers();  //Получает список пользователей с небольшим набором свойств пользователей
         exampleUserInfo
@@ -201,9 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
         return exampleUserInfo;
     }
+*/
 
-    private void onError() {
-        Log.d(TAG,"Ууууупсс.. ошибочка вышла..");
-    }
 
 }
