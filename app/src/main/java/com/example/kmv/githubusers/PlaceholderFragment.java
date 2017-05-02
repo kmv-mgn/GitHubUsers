@@ -11,32 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.kmv.githubusers.RetrofitGitHub;
-import com.example.kmv.githubusers.activity.MainActivity;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-
-import static com.example.kmv.githubusers.RetrofitGitHub.getModelsObservable;
-import static com.example.kmv.githubusers.RetrofitGitHub.init;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PlaceholderFragment extends Fragment {
-    private static final String TAG = "MyLog";          //константа для логов
     private static final String ARG_SECTION_NUMBER = "section_number";  //константа, необходимая для сохранения в Bundle
-
-
 
 
     public PlaceholderFragment() {
@@ -46,7 +26,7 @@ public class PlaceholderFragment extends Fragment {
     /* Возвращает новый экземпляр этого фрагмента по заданному номеру раздела.*/
     public static PlaceholderFragment newInstance(int sectionNumber) {
         PlaceholderFragment fragment = new PlaceholderFragment();   //создаем новый экземпляр фрагмента
-        Log.d(TAG,"newInstance фрагмента вызвана с sectionNumber = "+ Integer.toString(sectionNumber));
+        Log.d(Const.TAG,"newInstance фрагмента вызвана с sectionNumber = "+ Integer.toString(sectionNumber));
         Bundle args = new Bundle(); //создаем новый объект бандл для сохранения текущей страницы
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -57,9 +37,9 @@ public class PlaceholderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        int numTab; //переменная для хапоминания номера страницы пейджера
+        int numTab; //переменная для хранения номера страницы пейджера
         numTab = getArguments().getInt(ARG_SECTION_NUMBER);
-        Log.d(TAG,"... Создаем фрагмент, numTab = "+ Integer.toString(numTab));
+        Log.d(Const.TAG,"... Создаем фрагмент, numTab = "+ Integer.toString(numTab));
 
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
 
@@ -68,15 +48,8 @@ public class PlaceholderFragment extends Fragment {
         tv.setText(displayText);
 
         CardAdapter adapter = new CardAdapter();
-        //по первым 10-ти логинам делаем запрос к апи на полный набор сведений о пользователе
-        /*for (int i=0; i<10; i++){
-            RetrofitGit.getUserInfo(Data.usersList.get(i).getLogin(),adapter);
-        }*/
-        /*for (User user : Data.usersList){
-            RetrofitGit.getUserInfo(user.getLogin(),adapter);
-
-        }*/
-
+        //в соответствии со страницей пейджера numTab будет срабатывать адаптер
+        adapter.setNumAdapter(numTab);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(adapter);
@@ -86,7 +59,7 @@ public class PlaceholderFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
 
-        Log.d(TAG,"Создали фрагмент и устанавливаем его");
+        Log.d(Const.TAG,"Создали фрагмент и устанавливаем его");
         return rootView;
 
     }

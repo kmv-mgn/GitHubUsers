@@ -82,30 +82,12 @@ public class MainActivity extends AppCompatActivity {
                                             // и сохраняется в списке класса Data
         Log.d(Const.TAG,"Готов первоначальный список пользователей! Первый в списке:"+ Data.usersList.get(0).getLogin());
 
+        //создается объект ретрофита, выполнятеся запрос к серверу на подробные сведения о конкретном пользователе из списка
+        // и сохраняется в списке класса DetailsData
         for (int i=0; i<10; i++){
             RetrofitGit.getUserInfo(Data.usersList.get(i).getLogin());
-
+            Log.d(Const.TAG,"Готов подробный список пользователей!");
         }
-
-    /*    //1й вариант:
-        usersList.clear();
-        usersGitHub();      //получаем список польз-лей, а потом полную информацию о каждом по логину из списка
-         for (User user : usersList){
-            Log.d(TAG,"У пользователя "+user.getLogin()+" подписчиков = "+user.getFollowers());
-        }
-*/
- /*      //или 2й вариант:
-        usersList.clear();
-        getUserListGitHub();    //получаем список всех пользователей с api
-
-        for (int i=0; i<10; i++){
-            Log.d(TAG,"usersList: "+i+" человечек из списка: "+usersList.get(i).getLogin()+" = "+usersList.get(i).getFollowers());
-            getUserInfoGitHub(usersList.get(i).getLogin());     //получаем полную информацию о пользователе по логину
-        }
-
-
-*/
-
 
         Toast.makeText(this, "Конец!", Toast.LENGTH_LONG).show();
     }
@@ -113,52 +95,7 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------
     //  ------------              мои методы            ------------------------------
     //--------------------------------------------------------------------------------
-/*//для варианта 2
-    private Observable<ArrayList<User>> getUserListGitHub(){        //Получение списка пользователей от api
-        //информацией по конкретному пользователю
 
-        Observable<ArrayList<User>> userList = gitHubService.getUsers();  //Получает список пользователей с небольшим набором свойств пользователей
-        Subscriber<ArrayList<User>> subscriber = new Subscriber<ArrayList<User>>() {
-            @Override
-            public void onCompleted() {
-                Log.d(TAG,"----Выполнение метода onCompleted");
-            }
-            @Override
-            public void onError(Throwable e) {
-                Log.d(TAG,"-----Ошибка onError: "+e);
-            }
-            @Override
-            public void onNext(ArrayList<User> users) {
-                Log.d(TAG,"-----Проверка первого элемента: "+users.get(1).getLogin()+" = "+users.get(1).getFollowers());
-                usersList = users;
-            }
-        };
-        userList.subscribe(subscriber);
-        return userList;
-    }
-//для варианта 2
-    private Observable<User> getUserInfoGitHub(final String userLogin){        //Получение информации о пользователе
-        //информацией по конкретному пользователю
-        Observable<User> userInfo = gitHubServiceUserInfo.getUserInfo(userLogin);
-        Subscriber<User> subscriber = new Subscriber<User>() {
-            @Override
-            public void onCompleted() {
-                Log.d(TAG,"-+-+-Выполнение метода onCompleted");
-            }
-            @Override
-            public void onError(Throwable e) {
-                Log.d(TAG,"-+-+-Ошибка onError: "+e);
-            }
-            @Override
-            public void onNext(User user) {
-                Log.d(TAG,"-+-+-Количество подписчиков у "+user.getLogin()+" = "+user.getFollowers());
-                //mCardAdapter.addData(user); //usersList = users;
-            }
-        };
-        userInfo.subscribe(subscriber);
-        return userInfo;
-    }
-*/
 //для варианта 1
 /*  private Observable<ArrayList<User>> usersGitHub(){        //Получение информации о пользователях от api
         //информацией по конкретному пользователю
