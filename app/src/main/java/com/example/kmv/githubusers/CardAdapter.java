@@ -36,10 +36,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             case 2: mItems = DetailsData.getDataQZ();
                 break;
         }
-
-
-        mItems=DetailsData.getDataIP();
     }
+
     //Предоставляет ссылку на представления, используемые в RecyclerView
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
@@ -65,6 +63,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
                     //Заполнение заданного представления данными
     public void onBindViewHolder(ViewHolder holder, final int position) {
+
         User user = mItems.get(position);
         CardView cardView = holder.cardView;
         holder.login.setText(user.getName());                        //прописываем имя пользователя
