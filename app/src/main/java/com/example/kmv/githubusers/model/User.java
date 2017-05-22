@@ -1,5 +1,5 @@
 
-package com.example.kmv.githubusers;
+package com.example.kmv.githubusers.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

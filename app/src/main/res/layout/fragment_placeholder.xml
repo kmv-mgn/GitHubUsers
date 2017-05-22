@@ -2,14 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kmv.githubusers.PlaceholderFragment">
+    tools:context="com.example.kmv.githubusers.fragment.PlaceholderFragment">
 
-
-    <TextView
-        android:id="@+id/tv_Fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
 
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -1,13 +1,16 @@
-package com.example.kmv.githubusers;
+package com.example.kmv.githubusers.data;
+
+import com.example.kmv.githubusers.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by work_android on 01.05.2017.
+ * Список пользователей GitHub
  */
 
 public class Data {
+
     public static List<User> usersList = new ArrayList<User>(){};
 
     public static void addData (User user) {

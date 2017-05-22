@@ -1,4 +1,6 @@
-package com.example.kmv.githubusers;
+package com.example.kmv.githubusers.retrofit;
+
+import com.example.kmv.githubusers.model.User;
 
 import java.util.ArrayList;
 import rx.Observable;
@@ -6,7 +8,7 @@ import rx.Observable;
 import retrofit2.http.GET;
 
 /**
- * Created by work_android on 24.03.2017.
+ * Получение списка пользователей от апи гитхаба
  */
 
 public interface GitHubService {

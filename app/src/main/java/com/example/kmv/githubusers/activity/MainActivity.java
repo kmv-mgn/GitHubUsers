@@ -4,47 +4,16 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.kmv.githubusers.CardAdapter;
-import com.example.kmv.githubusers.Const;
-import com.example.kmv.githubusers.Data;
-import com.example.kmv.githubusers.GitHubService;
-import com.example.kmv.githubusers.GitHubServiceUserInfo;
+import com.example.kmv.githubusers.data.Data;
 import com.example.kmv.githubusers.R;
-import com.example.kmv.githubusers.RetrofitGit;
-import com.example.kmv.githubusers.SectionsPagerAdapter;
-import com.example.kmv.githubusers.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import com.example.kmv.githubusers.retrofit.RetrofitGit;
+import com.example.kmv.githubusers.adapter.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    //public RetrofitGit retrofitGit;
-    private SectionsPagerAdapter mSectionsPagerAdapter;             //адаптер фрагмента для пейджера
-    private ViewPager mViewPager;                                   //@ViewPager, в котором будет размещаться содержание раздела
-    private static final String TAG = "MyLog";
-    //public static List<User> usersList = new ArrayList<User>();                //для хранения полученного с сервера списка объектов типа User
-
-
+   SectionsPagerAdapter mSectionsPagerAdapter;             //адаптер фрагмента для пейджера
+   ViewPager mViewPager;                                   //@ViewPager, в котором будет размещаться содержание раздела
 
 
  //--------------------------------------------------------------------------------------------------
@@ -56,93 +25,22 @@ public class MainActivity extends AppCompatActivity {
 
         // Создаем адаптер, который будет возвращать фрагмент для каждой активной вкладки.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        Log.d(TAG,"Прошли создание адаптера mSectionsPagerAdapter");
 
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        //Log.d(TAG,"Нашли R.id.container в объект mViewPager");
-
-        Log.d(TAG,"Установливаем для mViewPager адаптер mSectionsPagerAdapter");
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        Log.d(TAG,"Связываем tabLayout и mViewPager");
         tabLayout.setupWithViewPager(mViewPager);
 
-       /* //устанавливаем RecyclerView и CardView
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //mRecyclerView.setAdapter(mCardAdapter);
-*/
 //---------------------------------------------------------------------------------------------------
-        //создаем объект ретрофита Retrofit
-        //retrofitGit = new RetrofitGit();
+
         RetrofitGit.initGitHub();           //создается объект ретрофита, выполнятеся запрос к серверу на список пользователей
                                             // и сохраняется в списке класса Data
-        Log.d(Const.TAG,"Готов первоначальный список пользователей! Первый в списке:"+ Data.usersList.get(0).getLogin());
 
         //создается объект ретрофита, выполнятеся запрос к серверу на подробные сведения о конкретном пользователе из списка
         // и сохраняется в списке класса DetailsData
         for (int i=0; i<10; i++){
             RetrofitGit.getUserInfo(Data.usersList.get(i).getLogin());
-            Log.d(Const.TAG,"Готов подробный список пользователей!");
         }
-
-        Toast.makeText(this, "Конец!", Toast.LENGTH_LONG).show();
     }
-
-    //--------------------------------------------------------------------------------
-    //  ------------              мои методы            ------------------------------
-    //--------------------------------------------------------------------------------
-
-//для варианта 1
-/*  private Observable<ArrayList<User>> usersGitHub(){        //Получение информации о пользователях от api
-        //информацией по конкретному пользователю
-        Observable<ArrayList<User>> exampleUserInfo = gitHubService.getUsers();  //Получает список пользователей с небольшим набором свойств пользователей
-        exampleUserInfo
-                .flatMap(new Func1<List<User>, Observable<User>>() {
-                    @Override
-                    public Observable<User> call(List<User> users) {                    //преобразуем каждый "выпущенный" User в отдельный observable
-                        return Observable.from(users);
-                    }
-                })
-                .concatMap(new Func1<User, Observable<User>>() {
-                    @Override
-                    public Observable<User> call(User user) {
-                        return gitHubServiceUserInfo.getUserInfo(user.getLogin());  //получаем информацию о пользователе по его логину
-
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Action1<Throwable> ()
-                        {
-                            @Override
-                            public void call(Throwable throwable) {
-                                Log.d(TAG,"Ошибка  "+ throwable);
-                                onError();
-                            }
-                        })
-                .subscribe(new Subscriber<User>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG,"-+-+-Выполнение метода onCompleted");
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG,"-+-+-Ошибка onError: "+e);
-                    }
-                    @Override
-                    public void onNext(User user) {
-                        Log.d(TAG,"-+-+-Выполнение метода onNext");
-                        usersList.add(user);
-                    }
-                });
-
-        return exampleUserInfo;
-    }
-*/
-
-
 }

@@ -1,15 +1,14 @@
-package com.example.kmv.githubusers;
+package com.example.kmv.githubusers.retrofit;
 
-import java.util.List;
+import com.example.kmv.githubusers.model.User;
+
 import rx.Observable;
 
-import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 /**
- * Created by work_android on 24.03.2017.
+ * Получение информации от апи гитхаба о конкретном пользователе
  */
 
 public interface GitHubServiceUserInfo {

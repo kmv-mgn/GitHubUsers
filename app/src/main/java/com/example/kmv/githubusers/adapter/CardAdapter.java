@@ -1,8 +1,7 @@
-package com.example.kmv.githubusers;
+package com.example.kmv.githubusers.adapter;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,36 +9,35 @@ import android.widget.TextView;
 
 import java.util.List;
 import com.bumptech.glide.Glide;
+import com.example.kmv.githubusers.data.DetailsData;
+import com.example.kmv.githubusers.R;
+import com.example.kmv.githubusers.model.User;
 
 /**
  * Адаптер карточек для RecyclerView on 23.03.2017.
  */
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
-    //List<User> mItems = DetailsData.usersDetailList;
-    //List<User> mItems = DetailsData.getDataAH();
-    List<User> mItems;// = DetailsData.getDataIP();
 
-    //добавление данных в процессе считывания данных с сервера
-    public void addDataCard (User user) {
-        Log.d(Const.TAG,"Зашли в метод addData и добавили "+ user.getLogin());
-        //mItems.add(user);           //добавление данных о пользователе в список
-        //notifyDataSetChanged();     //обновление RecyclerView
-    }
-    //указывает, какой именно список пользователей нужно загрузить в карточки
+    private static final int TAB_NUM_0 = 0;    //вкладка  A-H
+    private static final int TAB_NUM_1 = 1;    //вкладка  I-P
+    private static final int TAB_NUM_2 = 2;    //вкладка  Q-Z
+
+    private List<User> mItems;
+
+    //определяем, какой именно список пользователей нужно загрузить в карточки
     public void setNumAdapter(int numTab){
         switch (numTab) {
-            case 0: mItems = DetailsData.getDataAH();
+            case TAB_NUM_0: mItems = DetailsData.getDataAH();
                 break;
-            case 1: mItems = DetailsData.getDataIP();
+            case TAB_NUM_1: mItems = DetailsData.getDataIP();
                 break;
-            case 2: mItems = DetailsData.getDataQZ();
+            case TAB_NUM_2: mItems = DetailsData.getDataQZ();
                 break;
         }
     }
 
-    //Предоставляет ссылку на представления, используемые в RecyclerView
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+     public static class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
         public TextView login;
         public TextView followUsers;
@@ -49,19 +47,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             super(v);
             cardView = v;
             login = (TextView) v.findViewById(R.id.tv_login);
-            login.setText("ля-ля-ля");
             followUsers = (TextView) v.findViewById(R.id.tv_FollowUsers);
             avatar = (ImageView) v.findViewById(R.id.iv_avatar);
         }
 
     }
-    @Override       //Создание нового представления
+    @Override
     public CardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CardView cv = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.card,parent,false);
         return new ViewHolder(cv);
     }
 
-                    //Заполнение заданного представления данными
+
     public void onBindViewHolder(ViewHolder holder, final int position) {
 
         User user = mItems.get(position);
@@ -76,7 +73,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     }
 
-    @Override       //Возвращает количество вариантов в наборе данных
+    @Override
     public int getItemCount() {
         return mItems.size();
     }
